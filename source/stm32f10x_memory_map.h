@@ -261,7 +261,7 @@ typedef struct {
 //
 //---------------------------------------------
 
-// SPI Base addresses
+// I2C Base addresses
 #define I2C1_BASE_ADDRESS      0x40005400
 #define I2C2_BASE_ADDRESS      0x40005800
 
@@ -280,4 +280,43 @@ typedef struct {
 
 #define I2C1     ( (volatile stm32f10x_i2c_t * ) I2C1_BASE_ADDRESS )
 #define I2C2     ( (volatile stm32f10x_i2c_t * ) I2C2_BASE_ADDRESS )
+
+//---------------------------------------------
+//     Define the registers of ADC:
+//
+//---------------------------------------------
+
+// ADC Base addresses
+#define ADC1_BASE_ADDRESS      0x40012400
+#define ADC2_BASE_ADDRESS      0x40012800
+#define ADC3_BASE_ADDRESS      0x40013C00
+
+// ADC Register Structure
+typedef struct {
+	 volatile unsigned int SR;		// ADC status register
+     volatile unsigned int CR1;     // ADC Control register 1
+     volatile unsigned int CR2;     // ADC Control register 2
+     volatile unsigned int SMPR1;   // ADC Sample time register 1
+     volatile unsigned int SMPR2;   // ADC Sample time register 2
+     volatile unsigned int JOFR1;	// ADC injected channel data offset register 1
+     volatile unsigned int JOFR2;	// ADC injected channel data offset register 2
+     volatile unsigned int JOFR3;	// ADC injected channel data offset register 3
+     volatile unsigned int JOFR4;	// ADC injected channel data offset register 4
+     volatile unsigned int HTR;     // ADC watchdog high threshold register
+     volatile unsigned int LTR;     // ADC watchdog low threshold register
+     volatile unsigned int SQR1;    // ADC regular sequence register 1
+     volatile unsigned int SQR2;    // ADC regular sequence register 2
+     volatile unsigned int SQR3;    // ADC regular sequence register 3
+     volatile unsigned int JSQR;	// ADC injected sequence register
+     volatile unsigned int JDR1;	// ADC injected data register 1
+     volatile unsigned int JDR2;	// ADC injected data register 2
+     volatile unsigned int JDR3;	// ADC injected data register 3
+     volatile unsigned int JDR4;	// ADC injected data register 4
+     volatile unsigned int DR;		// ADC regular data register
+} stm32f10x_adc_t;
+
+#define ADC1     ( (volatile stm32f10x_adc_t * ) ADC1_BASE_ADDRESS )
+#define ADC2     ( (volatile stm32f10x_adc_t * ) ADC2_BASE_ADDRESS )
+#define ADC3     ( (volatile stm32f10x_adc_t * ) ADC3_BASE_ADDRESS )
+
 #endif /* MEMORY_MAP_H_ */

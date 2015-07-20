@@ -49,7 +49,7 @@ void rccGetClocks (Clocks_Typedef* clocks) {
 			PREDIV1 /= ( ( ( RCC->CFGR2 ) & ( STM32F10X_RCC_CFGR2_PREDIV1) ) + 1);  // PREDIV1
 			// PLLMUL
 			if( PLLMUL > 1)   PREDIV1 *= ( PLLMUL + 2 );
-			if( PLLMUL == 13) PREDIV1 /= 6.5;
+			if( PLLMUL == 13) PREDIV1 = PREDIV1 * 13 / 2;
 			SYSCLK = PREDIV1;
 		}
 		else { // HSI oscillator clock / 2 selected as PLL input clock

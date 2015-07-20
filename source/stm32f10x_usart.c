@@ -56,7 +56,7 @@ void usartSetBaudrate(unsigned int baud) {
      fraction /= baud;
 
      brr  = USART1->BRR;
-     brr  = mantissa<<4;                //set the mantissa
+     brr  = mantissa << 4;                //set the mantissa
      brr |= fraction;                  //set the fraction
 
      USART1->BRR = brr;

@@ -52,6 +52,8 @@ void gpioInit (volatile stm32f10x_gpio_t* GPIOx, unsigned char pin, unsigned cha
 // - no return parameter
 //---------------------------------------------------------------------
 void gpioPinSet (volatile stm32f10x_gpio_t* GPIOx, unsigned char pin, unsigned char value) {
+// at kell irni!!!!!!!!!!!!!!!
+	//!!!!!!!!
 	if(value) {
 		GPIOx->BSRR |= (1 << pin);          // write the set register
 		GPIOx->BSRR &= ~(1 << (pin+16));    // and clear the reset register

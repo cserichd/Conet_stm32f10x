@@ -13,15 +13,15 @@
 #include "general_com.h"
 
 monitor_cmd_td cmds[COMMAND_NUMBER] = {
-  { .command_name = "help",  .mon_ptxt = &monitorHelp,     .help_text = "Help for the monitor\r\nCmds: help cls reset mr mwb mwh mww dl go\r\nType help <cmd> for more info\r\n" },
-  { .command_name = "cls",   .mon_ptxt = &monitorCls,      .help_text = "cls: clear the terminal screen\r\n" },
-  { .command_name = "reset", .mon_ptxt = &monitorRst,      .help_text = "reset: reset the device\r\n" },
-  { .command_name = "mr",    .mon_ptxt = &monitorMemRead,  .help_text = "mr<source><size>: dump the memory\r\nparam:\tsource: source address in hexa\r\n\t\tsize: number of the bytes in dec\r\n" },
-  { .command_name = "mwb",   .mon_ptxt = &monitorMemWrite, .help_text = "mwb<destination><data>: write one byte in mem\r\nparam:\tdestination: source address in hexa\r\n\t\tdata: data to write in hex\r\n" },
-  { .command_name = "mwh",   .mon_ptxt = &monitorMemWrite, .help_text = "mwh<destination><data>: write two bytes in mem\r\nparam:\tdestination: source address in hexa\r\n\t\tdata: data to write in hex\r\n" },
-  { .command_name = "mww",   .mon_ptxt = &monitorMemWrite, .help_text = "mwb<destination><data>: write four bytes in mem\r\nparam:\tdestination: source address in hexa\r\n\t\tdata: data to write in hex\r\n" },
-  { .command_name = "dl",    .mon_ptxt = &monitorDl,       .help_text = "dl<destination><data>: write data in mem from usart\r\nparam:\tdestination: source address in hexa\r\n\t\tsize: number of bytes in dec\r\n" },
-  { .command_name = "go",    .mon_ptxt = &monitorGo,       .help_text = "go<destination>: jump to the specified address\r\nparam:\tdestination: address to jump in hexa\r\n" }
+  { .command_name = "help",  .mon_ptxt = &monitorHelp,     .help_text = "\r\nHelp for the commands in the monitor.\r\nType help <cmd> for more info\r\n" },
+  { .command_name = "cls",   .mon_ptxt = &monitorCls,      .help_text = ": clear the terminal screen\r\n" },
+  { .command_name = "reset", .mon_ptxt = &monitorRst,      .help_text = ": reset the device\r\n" },
+  { .command_name = "mr",    .mon_ptxt = &monitorMemRead,  .help_text = "<source><size>: dump the memory\r\nparam:\tsource: source address in hexa\r\n\t\tsize: number of the bytes in dec\r\n" },
+  { .command_name = "mwb",   .mon_ptxt = &monitorMemWrite, .help_text = "<destination><data>: write one byte in mem\r\nparam:\tdestination: source address in hexa\r\n\t\tdata: data to write in hex\r\n" },
+  { .command_name = "mwh",   .mon_ptxt = &monitorMemWrite, .help_text = "<destination><data>: write two bytes in mem\r\nparam:\tdestination: source address in hexa\r\n\t\tdata: data to write in hex\r\n" },
+  { .command_name = "mww",   .mon_ptxt = &monitorMemWrite, .help_text = "<destination><data>: write four bytes in mem\r\nparam:\tdestination: source address in hexa\r\n\t\tdata: data to write in hex\r\n" },
+  { .command_name = "dl",    .mon_ptxt = &monitorDl,       .help_text = "<destination><data>: write data in mem from usart\r\nparam:\tdestination: source address in hexa\r\n\t\tsize: number of bytes in dec\r\n" },
+  { .command_name = "go",    .mon_ptxt = &monitorGo,       .help_text = "<destination>: jump to the specified address\r\nparam:\tdestination: address to jump in hexa\r\n" }
 
 };
 
@@ -89,9 +89,13 @@ unsigned int monitorHelp(unsigned int argc, char** argv) {
 
      for(i = 0; i < COMMAND_NUMBER; i++) {                      // call help <cmd>
           if(strcmp(arg1,cmds[i].command_name) == STR_EQUAL) {
-               uprintf("%s", cmds[i].help_text);
+        	  uprintf("%s%s",cmds[i].command_name, cmds[i].help_text);
                return 0;
           }
+     }
+     for(i = 0; i < COMMAND_NUMBER; i++) {
+       uprintf(" %s", cmds[i].command_name);
+
      }
      uprintf("%s", cmds[CMD_HELP].help_text);                   // normal help message
      return 0;  // okay
@@ -167,12 +171,16 @@ unsigned int monitorMemWrite(unsigned int argc, char** argv) {
      unsigned int arg2 = stoi(argv[2], INT_HEX_BASE); // convert the second parameter to int (string in hex)
      volatile unsigned int* ptr;
 
-     if     (strcmp("mww",argv[0]) == STR_EQUAL) arg2 &= 0xffffffff;    // write memory in word
-     else if(strcmp("mwh",argv[0]) == STR_EQUAL) arg2 &= 0x0000ffff;    // write memory in half word
-     else if(strcmp("mwb",argv[0]) == STR_EQUAL) arg2 &= 0x000000ff;    // write memory in byte
-
-     ptr  = (volatile unsigned int*) arg1;      // set the pointer to the start address
-     *ptr = arg2;           // write out the data
+     switch (argv[0][2]) {
+       case 'w':
+    	   ptr = (volatile unsigned int*) arg1;  // set the pointer to the start address
+    	   *ptr = (unsigned int)arg2;
+    	   break;
+       case 'h': *ptr = (unsigned short)arg2;
+           	   break;
+       case 'b': *ptr = (unsigned char)arg2;
+           	   break;
+     }
      return 0;  // okay
 }
 
@@ -194,9 +202,7 @@ unsigned int monitorDl(unsigned int argc, char** argv) {
 
      for(i = 0; i < arg2; i++) {
           tmp[0] = USARTReceiveChar((void*)USART1,0);        // read the first four bits
-          uprintf("%c",tmp[0]);                     // send back to see it on the console
           tmp[1] = USARTReceiveChar((void*)USART1,0);        // read the second four bits
-          uprintf("%c",tmp[1]);                     // send back to see it on the console
           *(arg1 + ptr) = stoi(tmp, INT_HEX_BASE);  // convert to int the string and write out to (base address + pointer)
           ptr++;
      }

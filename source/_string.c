@@ -9,18 +9,6 @@
 #include "_string.h"
 
 //---------------------------------------------------------------------
-// exp: result = base^pow
-//---------------------------------------------------------------------
-unsigned int _exp(int base, int pow) {
-     unsigned int res = 1;
-     while(pow) {
-          res *= base;
-          pow--;
-     }
-     return res;
-}
-
-//---------------------------------------------------------------------
 // strtok: create tokens from the main str
 // - param:
 //      - str: main string
@@ -123,27 +111,12 @@ int _stoidec(char* str) {
 //---------------------------------------------------------------------
 int strcmp(char* str1, char* str2) {
      int str1_l = 0, str2_l = 0;
-     while(*str1) {     // strlen
+     while(*str1 && *str2) {
           str1++;
-          str1_l++;
-     }
-     while(*str2) {     // strlen
           str2++;
-          str2_l++;
-     }
-
-     if( str1_l == str2_l) {        // same string lengths
-          while(str2_l >= 0) {
-               if(*str1 == *str2) { // compare the two strings
-                    str1--;
-                    str2--;
-                    str2_l--;
-               }
-               else return STR_NOT_EQUAL;
+          if(*str1 != *str2) return STR_NOT_EQUAL;
           }
-     }
-     else if( str1_l < str2_l) return STR_SHORTER;       // if str1 shorter then str2 -> return -1
-     else if( str1_l > str2_l) return STR_LONGER;        // if str1 longer  then str2 -> return  1
+     if(*str1 != *str2) return STR_NOT_EQUAL;
      return STR_EQUAL;
 }
 
