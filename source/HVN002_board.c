@@ -6,7 +6,7 @@
  */
 #include "HVN002_board.h"
 #include "stm32f10x_gpio.h"
-
+#include "stm32f10x_clock.h"
 //---------------------------------------------------------------------
 // initGPIO: Initialize the leds and buttons
 // - no input parameter
@@ -35,7 +35,7 @@ void chipSelectInit() {
      gpioInit(GPIO_CS_OUT2, PIN_CS_OUT2, STM32F10X_GPIOType_Output_PP_FAST);
      gpioInit(GPIO_nCS_ADC, PIN_nCS_ADC, STM32F10X_GPIOType_Output_PP_FAST);
      gpioInit(GPIO_nCS_RF,  PIN_nCS_RF,  STM32F10X_GPIOType_Output_OD_FAST);
-     gpioInit(GPIO_nCS_ROM, PIN_nCS_ROM, STM32F10X_GPIOType_Output_OD_FAST);
+     gpioInit(GPIO_nCS_ROM, PIN_nCS_ROM, STM32F10X_GPIOType_Output_PP_FAST);
 
      // no chip select enabled
      gpioPinSet(GPIO_CS_OUT1, PIN_CS_OUT1, 0 );
@@ -96,4 +96,17 @@ void chipSelect(chipselect_t cs) {
             gpioPinSet(GPIO_nCS_ROM, PIN_nCS_ROM, 1 );
               break;
      }
+}
+
+//---------------------------------------------------------------------
+// initEEPROM: Initialize the eeprom pins
+//  - no input parameter
+//  - no return parameter
+//---------------------------------------------------------------------
+void initEEPROM() {
+     //AFIO->MAPR &= ~(STM32F10X_AFIO_MAPR_SPI1_REMAP);
+     RCC->APB2ENR |= STM32F10X_RCC_APB2ENR_IOPAEN;
+     gpioInit(GPIO_SPI_SCK,  PIN_SPI_SCK,  STM32F10X_GPIOType_Alternate_PP);
+     gpioInit(GPIO_SPI_MOSI, PIN_SPI_MOSI, STM32F10X_GPIOType_Alternate_PP);
+     gpioInit(GPIO_SPI_MISO, PIN_SPI_MISO, STM32F10X_GPIOType_Input_PP);
 }

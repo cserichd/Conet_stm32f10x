@@ -84,19 +84,13 @@ int stoi(char* str, base_td base) {
 //      - converted number
 //---------------------------------------------------------------------
 int _stoihex(char* str) {
-     int res = 0, i = 0, length = 0;
-     while(*str) {              // find the end of the string
-          str++;                // and find out the length
-          i++;
-     }
-     str--;
-     length = i;            // length of the string
-     while(i > 0) {             // calculate the result
-          if( ( *str >= '0' ) && ( *str <= '9' ) ) res += ( (*str - '0')      * _exp(16,(length-i)) );   // add LSB to the result if 0-9
-          if( ( *str >= 'a' ) && ( *str <= 'f' ) ) res += ( (*str - 'a' + 10) * _exp(16,(length-i)) );   // add LSB to the result a-f
-          if( ( *str >= 'A' ) && ( *str <= 'F' ) ) res += ( (*str - 'A' + 10) * _exp(16,(length-i)) ) ;  // add LSB to the result A-F
-          str--;
-          i--;
+     int res = 0;
+     while(*str) {             // calculate the result
+       res <<= 4;
+       if( ( *str >= '0' ) && ( *str <= '9' ) ) res += (*str - '0');       // add LSB to the result if 0-9
+       if( ( *str >= 'a' ) && ( *str <= 'f' ) ) res += (*str - 'a' + 10);  // add LSB to the result a-f
+       if( ( *str >= 'A' ) && ( *str <= 'F' ) ) res += (*str - 'A' + 10);  // add LSB to the result A-F
+       str++;
      }
      return res;        // return with the value in int
 }
@@ -109,18 +103,12 @@ int _stoihex(char* str) {
 //      - converted number
 //---------------------------------------------------------------------
 int _stoidec(char* str) {
-     int res = 0, i = 0, length = 0;
-     while(*str) {              // find the end of the string
-          str++;                // and find out the length
-          i++;
-     }
-     str--;
-     length = i;
+     int res = 0;
 
-     while(i > 0) {             // calculate the result
-         res += ( *str - '0' ) * _exp(10,(length-i));
-         str--;
-         i--;
+     while(*str) {             // calculate the result
+       res = (res << 3) + (res << 1);
+       res += ( *str - '0' );
+       str++;
      }
      return res;
 }

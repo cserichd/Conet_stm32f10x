@@ -93,6 +93,14 @@ void spiSend(volatile stm32f10x_spi_t* spi, unsigned char data);
 //      - volatile stm32f10x_spi_t* spi - choose the proper spi
 // - no return parameter
 //---------------------------------------------------------------------
-unsigned short spiReceive(volatile stm32f10x_spi_t* spi);
+unsigned char spiReceive(volatile stm32f10x_spi_t* spi);
+
+//---------------------------------------------------------------------
+// spiReceive: receive data on SPI
+// - param:
+//      - volatile stm32f10x_spi_t* spi - choose the proper spi
+// - no return parameter
+//---------------------------------------------------------------------
+unsigned char spiSendReceive(volatile stm32f10x_spi_t* spi, unsigned char data);
 
 #endif /* STM32F10X_SPI_H_ */

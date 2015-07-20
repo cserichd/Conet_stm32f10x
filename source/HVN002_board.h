@@ -58,12 +58,12 @@ typedef enum chipselect{CS_ROM,CS_OUT1,CS_OUT2,CS_ADC,CS_RF,CS_NONE}chipselect_t
 //------------------------------------------------------
 // CAT25080 - SPI EEPROM commands
 //------------------------------------------------------
-#define EEPROM_SPI_CMD_WREN     0x06      // Enable Write Operations
-#define EEPROM_SPI_CMD_WRDI     0x04      // Disable Write Operations
-#define EEPROM_SPI_CMD_RDSR     0x05      // Read Status Register
-#define EEPROM_SPI_CMD_WRSR     0x01      // Write Status Register
-#define EEPROM_SPI_CMD_READ     0x03      // Read Data from Memory
-#define EEPROM_SPI_CMD_WRITE    0x02      // Write Data to Memory
+#define EEPROM_SPI_CMD_WREN     6      // Enable Write Operations
+#define EEPROM_SPI_CMD_WRDI     4      // Disable Write Operations
+#define EEPROM_SPI_CMD_RDSR     5      // Read Status Register
+#define EEPROM_SPI_CMD_WRSR     1      // Write Status Register
+#define EEPROM_SPI_CMD_READ     3      // Read Data from Memory
+#define EEPROM_SPI_CMD_WRITE    2      // Write Data to Memory
 
 //---------------------------------------------------------------------
 // initGPIO: Initialize the leds and buttons
@@ -86,5 +86,12 @@ void chipSelectInit();
 // - no return parameter
 //---------------------------------------------------------------------
 void chipSelect(chipselect_t cs);
+
+//---------------------------------------------------------------------
+// initEEPROM: Initialize the eeprom pins
+//  - no input parameter
+//  - no return parameter
+//---------------------------------------------------------------------
+void initEEPROM();
 
 #endif /* BOARD_H_ */

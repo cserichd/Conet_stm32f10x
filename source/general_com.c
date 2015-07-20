@@ -173,13 +173,13 @@ int _scanf (com_ctx_td ctxt,char* str) {
         if(*str == '%') {   // looking for format char
             str++;
             switch(*str) {
-                case 'd': if(_printDec(ctxt,va_arg(argument,int)))         bug = 0;  break; // decimal format
-                case 'w': if(_printHex(ctxt,va_arg(argument,int),8))       bug = 0;  break; // hex format in word
-                case 'h': if(_printHex(ctxt,va_arg(argument,int),4))       bug = 0;  break; // hex format in half word
-                case 'b': if(_printHex(ctxt,va_arg(argument,int),2))       bug = 0;  break; // hex format in byte
-                case 'c': if(_printChar(ctxt,(char)va_arg(argument,int)))  bug = 0;  break; // char format
-                case 's': if(_printString(ctxt,va_arg(argument,char*)))    bug = 0;  break; // string format
-                case '%': if(_printChar(ctxt,'%'))                         bug = 0;  break; // not valid format, just: %
+                case 'd': bug = _printDec(ctxt,va_arg(argument,int));         break; // decimal format
+                case 'w': bug = _printHex(ctxt,va_arg(argument,int),8);       break; // hex format in word
+                case 'h': bug = _printHex(ctxt,va_arg(argument,int),4);       break; // hex format in half word
+                case 'b': bug = _printHex(ctxt,va_arg(argument,int),2);       break; // hex format in byte
+                case 'c': bug = _printChar(ctxt,(char)va_arg(argument,int));  break; // char format
+                case 's': bug = _printString(ctxt,va_arg(argument,char*));    break; // string format
+                case '%': bug = _printChar(ctxt,'%');                         break; // not valid format, just: %
                 }
              }
          else {

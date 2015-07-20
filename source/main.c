@@ -117,21 +117,56 @@ int main()
 
 //---------------------------------------------------------------------
 #ifdef FELADAT7_SPI
+     uprintf("%w\r\n",_stoihex("1F3C"));
+     uprintf("%d\r\n",_stoidec("1993"));
+     volatile unsigned int i;
+     initEEPROM();
      chipSelectInit();
      spiInit(SPI1,SPI_DFF_8BIT,SPI_MSBFIRST);
-     chipSelect(CS_ROM);
-     spiSend(SPI1,EEPROM_SPI_CMD_RDSR);
-     //uprintf("SPI->DR: %w", SPI1->DR);
-     uprintf("%c\r\n",spiReceive(SPI1));
-
 #endif
      while(1) {
 
 #ifdef FELADAT7_SPI
+          /*unsigned int address = 0xFF, address_low = 0, address_high = 0;
+              address_low = address & 0xFF;
+              address_high = (address >> 8) & 0xFF;
+              chipSelect(CS_ROM);
+              asm("nop");
+              spiSendReceive(SPI1,EEPROM_SPI_CMD_WRITE);
+              spiSendReceive(SPI1, address_high);
+              spiSendReceive(SPI1, address_low);
+              spiSendReceive(SPI1, 0xFF);
+              asm("nop");
+              chipSelect(CS_NONE);
+              for(i = 0; i < 10000;i++);
+
+              chipSelect(CS_ROM);
+              asm("nop");
+
+              spiSendReceive(SPI1, EEPROM_SPI_CMD_READ);
+              spiSendReceive(SPI1,address_high);
+              spiSendReceive(SPI1,address_low);
+              uprintf("%d\r\n",spiSendReceive(SPI1,0xFF));
+
+              asm("nop");
+              chipSelect(CS_NONE);
+              for(i = 0; i < 10000;i++);*/
+              //for(i = 0; i < 1000000;i++);
      chipSelect(CS_ROM);
      spiSend(SPI1,EEPROM_SPI_CMD_RDSR);
      uprintf("%d\r\n",spiReceive(SPI1));
      chipSelect(CS_NONE);
+     for(i = 0; i < 1000000;i++);
+     chipSelect(CS_ROM);
+     spiSend(SPI1,EEPROM_SPI_CMD_WREN);
+     asm("nop");
+     chipSelect(CS_NONE);
+     for(i = 0; i < 1000;i++);
+     chipSelect(CS_ROM);
+     spiSend(SPI1,EEPROM_SPI_CMD_RDSR);
+     uprintf("%d\r\n",spiSendReceive(SPI1,EEPROM_SPI_CMD_RDSR));
+     chipSelect(CS_NONE);
+     for(i = 0; i < 1000000;i++);
 #endif
 //--------------------------------------------------------------------------
 #ifdef FELADAT1_SENDBACK // Send back the character received from pc

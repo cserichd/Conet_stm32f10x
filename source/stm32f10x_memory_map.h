@@ -238,7 +238,7 @@ typedef struct {
 #define SPI2_I2S_BASE_ADDRESS  0x40003800
 #define SPI3_I2S_BASE_ADDRESS  0x40003C00
 
-// USART Register Structure
+// SPI Register Structure
 typedef struct {
      volatile unsigned int CR1;      // SPI Control register 1
      volatile unsigned int CR2;      // SPI Control register 2
@@ -256,4 +256,28 @@ typedef struct {
 #define SPI2_I2S ( (volatile stm32f10x_spi_t * ) SPI2_I2S_BASE_ADDRESS )
 #define SPI3_I2S ( (volatile stm32f10x_spi_t * ) SPI3_I2S_BASE_ADDRESS )
 
+//---------------------------------------------
+//     Define the registers of I2C:
+//
+//---------------------------------------------
+
+// SPI Base addresses
+#define I2C1_BASE_ADDRESS      0x40005400
+#define I2C2_BASE_ADDRESS      0x40005800
+
+// I2C Register Structure
+typedef struct {
+     volatile unsigned int CR1;      // I2C Control register 1
+     volatile unsigned int CR2;      // I2C Control register 2
+     volatile unsigned int OAR1;     // I2C Own address register 1
+     volatile unsigned int OAR2;     // I2C Own address register 2
+     volatile unsigned int DR;       // I2C Data register
+     volatile unsigned int SR1;      // I2C Status register 1
+     volatile unsigned int SR2;      // I2C Status register 2
+     volatile unsigned int CCR;      // I2C Clock control register
+     volatile unsigned int TRISE;    // I2C TRISE register
+} stm32f10x_i2c_t;
+
+#define I2C1     ( (volatile stm32f10x_i2c_t * ) I2C1_BASE_ADDRESS )
+#define I2C2     ( (volatile stm32f10x_i2c_t * ) I2C2_BASE_ADDRESS )
 #endif /* MEMORY_MAP_H_ */
