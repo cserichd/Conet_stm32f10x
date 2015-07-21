@@ -161,4 +161,12 @@ void timerPwmDutyCycleSet(volatile stm32f10x_timer_t *TimerHandler, timer_channe
 // - no return parameter
 //---------------------------------------------------------------------
 void timerPwmInit(volatile stm32f10x_timer_t *TimerHandler, timer_channel ch, unsigned int us_period, unsigned int dutycycle);
+
+//---------------------------------------------------------------------
+// delay_ms: delay in millisec
+// - param: ms - delay time
+// - no return parameter
+//---------------------------------------------------------------------
+void delay_ms(unsigned int ms);
+
 #endif /* STM32F10X_TIMER_H_ */

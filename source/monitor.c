@@ -170,16 +170,20 @@ unsigned int monitorMemWrite(unsigned int argc, char** argv) {
      unsigned int arg1 = stoi(argv[1], INT_HEX_BASE); // convert the first parameter to int (string in hex)
      unsigned int arg2 = stoi(argv[2], INT_HEX_BASE); // convert the second parameter to int (string in hex)
      volatile unsigned int* ptr;
+     ptr = (volatile unsigned int*) arg1;  // set the pointer to the start address
 
      switch (argv[0][2]) {
        case 'w':
-    	   ptr = (volatile unsigned int*) arg1;  // set the pointer to the start address
-    	   *ptr = (unsigned int)arg2;
-    	   break;
-       case 'h': *ptr = (unsigned short)arg2;
-           	   break;
-       case 'b': *ptr = (unsigned char)arg2;
-           	   break;
+            *ptr = arg2;
+         break;
+       case 'h':
+            *ptr &= 0xFFFF0000;
+            *ptr |= (unsigned short)arg2;
+         break;
+       case 'b':
+            *ptr &= 0xFFFFFF00;
+            *ptr |= (unsigned char)arg2;
+         break;
      }
      return 0;  // okay
 }

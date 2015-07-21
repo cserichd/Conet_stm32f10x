@@ -296,17 +296,14 @@ typedef struct {
 	 volatile unsigned int SR;		// ADC status register
      volatile unsigned int CR1;     // ADC Control register 1
      volatile unsigned int CR2;     // ADC Control register 2
-     volatile unsigned int SMPR1;   // ADC Sample time register 1
-     volatile unsigned int SMPR2;   // ADC Sample time register 2
+     volatile unsigned int SMPR[2]; // ADC Sample time register
      volatile unsigned int JOFR1;	// ADC injected channel data offset register 1
      volatile unsigned int JOFR2;	// ADC injected channel data offset register 2
      volatile unsigned int JOFR3;	// ADC injected channel data offset register 3
      volatile unsigned int JOFR4;	// ADC injected channel data offset register 4
      volatile unsigned int HTR;     // ADC watchdog high threshold register
      volatile unsigned int LTR;     // ADC watchdog low threshold register
-     volatile unsigned int SQR1;    // ADC regular sequence register 1
-     volatile unsigned int SQR2;    // ADC regular sequence register 2
-     volatile unsigned int SQR3;    // ADC regular sequence register 3
+     volatile unsigned int SQR[3];    // ADC regular sequence registers
      volatile unsigned int JSQR;	// ADC injected sequence register
      volatile unsigned int JDR1;	// ADC injected data register 1
      volatile unsigned int JDR2;	// ADC injected data register 2

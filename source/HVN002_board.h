@@ -94,4 +94,11 @@ void chipSelect(chipselect_t cs);
 //---------------------------------------------------------------------
 void initEEPROM();
 
+//---------------------------------------------------------------------
+// ledPWMInit: Initialize the led for pwm out
+//  - no input parameter
+//  - no return parameter
+//---------------------------------------------------------------------
+void ledPWMInit();
+
 #endif /* BOARD_H_ */

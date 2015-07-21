@@ -13,6 +13,22 @@
 #include "stm32f10x_clock.h"
 #include "general_com.h"
 
+//---------------------------------------------------------------------
+// delay_ms: delay in millisec
+// - param: ms - delay time
+// - no return parameter
+//---------------------------------------------------------------------
+void delay_ms(unsigned int ms) {
+     timerInit(TIM2,1000);
+     timerStart(TIM2);
+     unsigned int cntr = 0;
+     while(cntr < ms) {
+          if(TIM2->SR & STM32F10X_TIMER_SR_CC4IF) {
+               TIM2->SR &= ~((unsigned int) STM32F10X_TIMER_SR_CC4IF);
+               cntr++;
+          }
+     }
+}
 
 //---------------------------------------------------------------------
 // _timClkEn: Enable the clock for TimerX

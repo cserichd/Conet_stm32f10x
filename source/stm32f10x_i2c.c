@@ -23,7 +23,7 @@
 //    • 2 MHz in Sm mode
 //    • 4 MHz in Fm mode
 //---------------------------------------------------------------------------------------------------
-void i2cInit(volatile stm32f10x_i2c_t* i2c, unsigned char add, unsigned char smbus, unsigned char fs, unsigned char duty, unsigned int CCR) {
+void i2cInit(volatile stm32f10x_i2c_t* i2c, unsigned char fs, unsigned char duty, unsigned int CCR) {
      if(i2c == I2C1) RCC->APB1ENR |= STM32F10X_RCC_APB1ENR_I2C1EN;  // enable the clock for the I2C
      if(i2c == I2C2) RCC->APB1ENR |= STM32F10X_RCC_APB1ENR_I2C2EN;
 
@@ -43,18 +43,62 @@ void i2cInit(volatile stm32f10x_i2c_t* i2c, unsigned char add, unsigned char smb
      i2c->CCR &= ~(STM32F10X_I2C_CCR_CCR);
      i2c->CCR |= (CCR & STM32F10X_I2C_CCR_CCR);
 
-     //i2c->OAR1 &= ~(STM32F10X_I2C_OAR1_ADD);                     // FM mode duty cycle => 0: Fm mode tlow/whigh = 2
-     if(fs) i2c->CCR |= STM32F10X_I2C_CCR_DUTY;                 // 1:  Fm mode tlow/whigh = 16/9
-
      i2c->CR1 |= STM32F10X_I2C_CR1_START;                 // set the start bit generation
 }
 
-void i2cSend(volatile stm32f10x_i2c_t* i2c, unsigned int address, unsigned int data) {
+
+void i2cSend(volatile stm32f10x_i2c_t* i2c, unsigned short address, unsigned char* data) {
+     volatile unsigned int tmp;
      while(( i2c->SR2 & STM32F10X_I2C_SR2_BUSY ));
      i2c->SR1 |= STM32F10X_I2C_SR1_SB;
      while(( i2c->SR1 & STM32F10X_I2C_SR1_SB));
+     if((address & 0x1000)) {
+          i2c->DR = (STM32F10X_I2C_10BIT_HEADER | ( (address >> 8) & 3) << 1 ) ;// 10 bit address mode
+          while(!(i2c->SR1 & STM32F10X_I2C_SR1_ADDR));
+          while(!(i2c->SR2 & STM32F10X_I2C_SR2_MSL));
+     }
+     tmp = i2c->DR;
+     tmp &= 0xff00;
+     tmp |= (( address ) & ( 0x00FE ));    // LSB reset to enter transmit mode
+     i2c->DR = tmp;
+     while(!(i2c->SR1 & STM32F10X_I2C_SR1_ADDR));
+     while(!(i2c->SR2 & STM32F10X_I2C_SR2_MSL));
+     while(data) {
+          i2c->DR = *data;
+          data++;
+          while(!(i2c->SR1 & STM32F10X_I2C_SR1_TxE));
+     }
 }
 
-void i2creceive() {
-
+void i2cReceive(volatile stm32f10x_i2c_t* i2c, unsigned short address, unsigned char* data, unsigned char num) {
+     volatile unsigned int tmp;
+     while(( i2c->SR2 & STM32F10X_I2C_SR2_BUSY ));
+     i2c->SR1 |= STM32F10X_I2C_SR1_SB;
+     while(( i2c->SR1 & STM32F10X_I2C_SR1_SB));
+     if((address & 0x1000)) {
+       i2c->DR = (STM32F10X_I2C_10BIT_HEADER | ( (address >> 8) & 3) << 1 ) ;// 10 bit address mode
+       while(!(i2c->SR1 & STM32F10X_I2C_SR1_ADDR));
+       while(!(i2c->SR2 & STM32F10X_I2C_SR2_MSL));
+       i2c->SR1 |= STM32F10X_I2C_SR1_SB;
+       while(( i2c->SR1 & STM32F10X_I2C_SR1_SB));
+       i2c->DR = (STM32F10X_I2C_10BIT_HEADER | ((( (address >> 8) & 3) << 1 ) + 1)) ; // 10 bit address mode
+       while(!(i2c->SR1 & STM32F10X_I2C_SR1_ADDR));
+       while(!(i2c->SR2 & STM32F10X_I2C_SR2_MSL));
+     }
+     tmp = i2c->DR;
+     tmp &= 0xff00;
+     tmp |= ((( address ) & ( 0x00FE )) + 1);    // LSB set to enter receive mode
+     i2c->DR = tmp;
+     while(!(i2c->SR1 & STM32F10X_I2C_SR1_ADDR));
+     while(!(i2c->SR2 & STM32F10X_I2C_SR2_MSL));
+     while(num > 1) {
+       *data = i2c->DR;
+       data++;
+       num--;
+       while((i2c->SR1 & STM32F10X_I2C_SR1_RxNE));
+    }
+     i2c->CR1 &= ~(STM32F10X_I2C_CR1_ACK);
+     i2c->CR1 |= STM32F10X_I2C_CR1_STOP;
+     *data = i2c->DR;
+     while((i2c->SR1 & STM32F10X_I2C_SR1_RxNE));
 }

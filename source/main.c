@@ -3,34 +3,17 @@
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_clock.h"
 #include "stm32f10x_spi.h"
-#include "general_com.h"
-#include "HVN002_board.h"
 #include "stm32f10x_timer.h"
 #include "stm32f10x_memory_map.h"
-#include "stm32f10x_rtc.h"
 #include "stm32f10x_powerctrl.h"
+#include "stm32f10x_rtc.h"
+#include "stm32f10x_adc.h"
+#include "general_com.h"
+#include "HVN002_board.h"
 #include "monitor.h"
 #include "_string.h"
 
-#define FELADAT7_SPI
-
-void ledPWMInit() {
-     gpioInit(GPIO_nBTN1, PIN_nBTN1, STM32F10X_GPIOType_Input_PP);
-     gpioInit(GPIO_nBTN4, PIN_nBTN4, STM32F10X_GPIOType_Input_PP);
-     gpioInit(GPIO_nLD3, PIN_nLD3, STM32F10X_GPIOType_Alternate_PP); // TIMER3 CH4 full remap PC9 -> nLD3
-     AFIO->MAPR |= ((unsigned int) STM32F10X_AFIO_MAPR_TIM3_REMAP);
-}
-
-void delay_ms(unsigned int ms){
-     timerStart(TIM2);
-     unsigned int cntr = 0;
-     while(cntr < ms) {
-          if(TIM2->SR & STM32F10X_TIMER_SR_CC4IF) {
-               TIM2->SR &= ~((unsigned int) STM32F10X_TIMER_SR_CC4IF);
-               cntr++;
-          }
-     }
-}
+#define FELADAT8_ADC
 
 int main()
 {
@@ -117,15 +100,27 @@ int main()
 
 //---------------------------------------------------------------------
 #ifdef FELADAT7_SPI
-     uprintf("%w\r\n",_stoihex("1F3C"));
-     uprintf("%d\r\n",_stoidec("1993"));
      volatile unsigned int i;
      initEEPROM();
      chipSelectInit();
      spiInit(SPI1,SPI_DFF_8BIT,SPI_MSBFIRST);
 #endif
-     while(1) {
+//---------------------------------------------------------------------
 
+//---------------------------------------------------------------------
+#ifdef FELADAT8_ADC
+     unsigned short voltage;
+     short temp;
+     tempvoltageInit();
+#endif
+//---------------------------------------------------------------------
+
+//---------------------------------------------------------------------
+     while(1) {
+#ifdef FELADAT8_ADC
+      readSensors(&temp,&voltage);
+      uprintf("Temp: %d\tVoltage: %d\r\n", temp, voltage);
+#endif
 #ifdef FELADAT7_SPI
           /*unsigned int address = 0xFF, address_low = 0, address_high = 0;
               address_low = address & 0xFF;
@@ -153,8 +148,7 @@ int main()
               for(i = 0; i < 10000;i++);*/
               //for(i = 0; i < 1000000;i++);
      chipSelect(CS_ROM);
-     spiSend(SPI1,EEPROM_SPI_CMD_RDSR);
-     uprintf("%d\r\n",spiReceive(SPI1));
+     uprintf("%d\r\n",spiSendReceive(SPI1,EEPROM_SPI_CMD_RDSR));
      chipSelect(CS_NONE);
      for(i = 0; i < 1000000;i++);
      chipSelect(CS_ROM);
@@ -163,7 +157,6 @@ int main()
      chipSelect(CS_NONE);
      for(i = 0; i < 1000;i++);
      chipSelect(CS_ROM);
-     spiSend(SPI1,EEPROM_SPI_CMD_RDSR);
      uprintf("%d\r\n",spiSendReceive(SPI1,EEPROM_SPI_CMD_RDSR));
      chipSelect(CS_NONE);
      for(i = 0; i < 1000000;i++);

@@ -1,5 +1,5 @@
 CALL ZocSend "rdl 20000000^M"
 CALL ZocWait "send"
-CALL ZocUpload "BINARY","D:\work2\Cserich Dávid\stm32f105rc_het2\conet_comment\output\main.bin"
+CALL ZocUpload "BINARY","D:\work2\Cserich Dávid\Conet_stm32f10x\output\main.bin"
 CALL ZocWait ">"
 CALL ZocSend "go 20000151^M"

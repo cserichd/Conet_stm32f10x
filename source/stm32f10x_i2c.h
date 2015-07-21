@@ -9,6 +9,8 @@
 #define STM32F10X_I2C_H_
 #include "stm32f10x_memory_map.h"
 
+#define STM32F10X_I2C_10BIT_HEADER      0xF0
+
 //------------------------------------------------------
 // I2C Control register 1
 //------------------------------------------------------
@@ -46,7 +48,7 @@
 #define STM32F10X_I2C_SR1_ADD10     (1 << 3)    // 10-bit header sent (Master mode
 #define STM32F10X_I2C_SR1_STOPF     (1 << 4)    // Stop detection (slave mode)
 #define STM32F10X_I2C_SR1_RxNE      (1 << 6)    // Data register not empty (receivers)
-#define STM32F10X_I2C_SR1_ TxE      (1 << 7)    // Data register empty (transmitters)
+#define STM32F10X_I2C_SR1_TxE      (1 << 7)    // Data register empty (transmitters)
 #define STM32F10X_I2C_SR1_BERR      (1 << 8)    // Bus error
 #define STM32F10X_I2C_SR1_ARLO      (1 << 9)    // Arbitration lost (master mode)
 #define STM32F10X_I2C_SR1_AF        (1 << 10)   // Acknowledge failure
@@ -82,10 +84,9 @@
 #define STM32F10X_I2C_OAR1_ADD_9_8    (1 << 15)       // I2C master mode selection
 #define STM32F10X_I2C_OAR1_ADDMODE    (1 << 15)       // Addressing mode (slave mode)
 
-void i2cInit(volatile stm32f10x_i2c_t* i2c, unsigned char add, unsigned char smbus, unsigned char fs, unsigned char duty, unsigned int CCR);
+void i2cInit(volatile stm32f10x_i2c_t* i2c, unsigned char fs, unsigned char duty, unsigned int CCR);
 
-
-void i2cSend();
+void i2cSend(volatile stm32f10x_i2c_t* i2c, unsigned short address, unsigned char* data);
 
 void i2creceive();
 

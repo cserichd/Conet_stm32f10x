@@ -8,6 +8,10 @@
 #ifndef SOURCE_STM32F10X_ADC_H_
 #define SOURCE_STM32F10X_ADC_H_
 
+#include "stm32f10x_memory_map.h"
+
+#define SQSELECT(value, sequence) (value   << ((sequence - 1) % 6) * 5)
+#define SMPRSELECT(value, channum) (value << ((channum % 10) * 3))
 //----------------------------------------------
 // ADC Status register (ADC_SR)
 //----------------------------------------------
@@ -144,5 +148,45 @@
 #define STM32F10X_ADC_JSQR_JSQ4_0	(0x1  << 15)
 #define STM32F10X_ADC_JSQR_JSQ4		(0xF  << 16)
 #define STM32F10X_ADC_JSQR_JL		(0x3  << 20) 	// Injected sequence length
+
+
+//---------------------------------------------------------------------
+// adcInit: Initialize the ADC
+// - param:
+//      - volatile stm32f10x_adc_t* adc - pointer to the adc
+//      - align - setting for the alignment
+//      - cont  - continuous mode
+//      - tsvrefe - enable the temp and voltage channel
+// - no return parameter
+//---------------------------------------------------------------------
+void adcInit(volatile stm32f10x_adc_t* adc, unsigned char align, unsigned char cont, unsigned char tsvrefe);
+
+//---------------------------------------------------------------------
+// adcChannelInit: Initialize the ADC channel
+// - param:
+//      - volatile stm32f10x_adc_t* adc - pointer to the adc
+//      - channum - number of the channel
+//      - sampletime  - settings for the sample time
+//      - sequence - number of the sequence
+//      - regular - regular or injected channel
+// - no return parameter
+//---------------------------------------------------------------------
+void adcChannelInit(volatile stm32f10x_adc_t* adc, unsigned char channum, unsigned char sampletime, unsigned char sequence, unsigned char regular);
+
+//---------------------------------------------------------------------
+// tempvoltageInit: Initialize the temperature and voltage sensor
+// - no input parameter
+// - no return parameter
+//---------------------------------------------------------------------
+void tempvoltageInit();
+
+//---------------------------------------------------------------------
+// readSensors: Read the value of the two sensors
+// - param:
+//      - temp - value of the temp sensor
+//      - voltage - value of the voltage sensor
+// - no return parameter
+//---------------------------------------------------------------------
+void readSensors(short* temp, unsigned short* voltage);
 
 #endif /* SOURCE_STM32F10X_ADC_H_ */

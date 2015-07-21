@@ -7,6 +7,7 @@
 #include "HVN002_board.h"
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_clock.h"
+
 //---------------------------------------------------------------------
 // initGPIO: Initialize the leds and buttons
 // - no input parameter
@@ -109,4 +110,16 @@ void initEEPROM() {
      gpioInit(GPIO_SPI_SCK,  PIN_SPI_SCK,  STM32F10X_GPIOType_Alternate_PP);
      gpioInit(GPIO_SPI_MOSI, PIN_SPI_MOSI, STM32F10X_GPIOType_Alternate_PP);
      gpioInit(GPIO_SPI_MISO, PIN_SPI_MISO, STM32F10X_GPIOType_Input_PP);
+}
+
+//---------------------------------------------------------------------
+// ledPWMInit: Initialize the led for pwm out
+//  - no input parameter
+//  - no return parameter
+//---------------------------------------------------------------------
+void ledPWMInit() {
+     gpioInit(GPIO_nBTN1, PIN_nBTN1, STM32F10X_GPIOType_Input_PP);
+     gpioInit(GPIO_nBTN4, PIN_nBTN4, STM32F10X_GPIOType_Input_PP);
+     gpioInit(GPIO_nLD3, PIN_nLD3, STM32F10X_GPIOType_Alternate_PP); // TIMER3 CH4 full remap PC9 -> nLD3
+     AFIO->MAPR |= ((unsigned int) STM32F10X_AFIO_MAPR_TIM3_REMAP);
 }
